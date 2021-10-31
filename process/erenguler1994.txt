@@ -1,0 +1,2 @@
+Database tables and managing them discussed with my friend seyfi.
+Index page is initialized.
