@@ -25,6 +25,7 @@ def home_page():
     return render_template("index.html")
 
 
+
 @app.route('/login')
 @app.route('/',methods=['GET','POST'])
 def login_page():
@@ -40,19 +41,44 @@ def login_page():
             session['loggedin'] = True
             session['username'] = account['username']
             session['id'] = account['id']
+            session['admin'] = 0
             error = 'Logged in successfully !'
-            return render_template('index.html',error = error)
+            if account['is_admin']:
+                session['admin'] = 1
+                return render_template('index.html',error = error)
+            else:
+                return render_template('index.html',error = error)
 
         else:
             error = '!!!!Incorrect username or password!!!!!!!'
             
     return render_template('login.html',error =error)
 
+@app.route("/admin",methods=['GET','POST'])
+def admin_page ():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM accounts WHERE username = % s AND is_admin = 1',(session['username'],))
+    acc = cursor.fetchone()
+    cursor.execute('select * from COUNTRY order by countryID asc')
+    countries = cursor.fetchall()
+    if acc:
+        return render_template("admin.html",country = countries)
+    else:
+        return render_template("401.html"),401
+
+@app.route('/new_country')
+def new_country():
+    if session['admin'] == 1:
+        return render_template('new_country.html',error = error)
+    else:
+        return render_template("401.html"),401
+
 @app.route('/logout')
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
+    session.pop('admin', None)
     return redirect(url_for('login_page'))
 
 @app.route('/register', methods =['GET', 'POST'])
@@ -88,7 +114,6 @@ def register():
         message = 'Please fill out the form !'
 
     return render_template('register.html', message = message)
-
 
 @app.route("/password")
 def forgot_password():
