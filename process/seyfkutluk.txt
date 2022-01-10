@@ -1,3 +1,4 @@
 # The data usage in the project has been discussed with my friend Eren. 31/10/2021
 # Some changes has been apllied to index page. 31/10/2021
 # MySQL database has been integrated to login register pages. 21/11/2021
+# Removed unnecessary file. 10/01/2022
