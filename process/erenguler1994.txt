@@ -1,3 +1,6 @@
 Database tables and managing them discussed with my friend seyfi. 31/10/2021
 Index page is initialized. 31/10/2021
 Flask entegrated into the website. (index page, 404,401 error page, layout template page, login, register, forgot password page) 20/11/2021
+all the data from excel files are added into mysql database. over 8000 rows are added 9/1/2022
+left side navigation for countries, their info, stats are called from the db. 10/1/2022
+admin page is added for seeing the countries 10/1/2022
