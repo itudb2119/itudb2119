@@ -20,9 +20,12 @@ app.config['MYSQL_DB'] ='u413789411_blg'
 mysql=MySQL(app)
 
 
-@app.route("/home")
+@app.route("/home",methods=['GET','POST'])
 def home_page():
-    return render_template("index.html")
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM COUNTRY ORDER BY countryID ASC')
+    countries = cursor.fetchall()
+    return render_template("index.html",countries = countries)
 
 
 
@@ -36,7 +39,9 @@ def login_page():
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM accounts WHERE username = % s AND password = % s',(username,password,))
         account = cursor.fetchone()
-
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM COUNTRY ORDER BY countryID ASC')
+        countries = cursor.fetchall()
         if account:
             session['loggedin'] = True
             session['username'] = account['username']
@@ -45,9 +50,9 @@ def login_page():
             error = 'Logged in successfully !'
             if account['is_admin']:
                 session['admin'] = 1
-                return render_template('index.html',error = error)
+                return render_template('index.html',error = error,countries = countries)
             else:
-                return render_template('index.html',error = error)
+                return render_template('index.html',error = error, countries = countries)
 
         else:
             error = '!!!!Incorrect username or password!!!!!!!'
@@ -62,7 +67,7 @@ def admin_page ():
     cursor.execute('select * from COUNTRY order by countryID asc')
     countries = cursor.fetchall()
     if acc:
-        return render_template("admin.html",country = countries)
+        return render_template("admin.html",countries = countries)
     else:
         return render_template("401.html"),401
 
@@ -115,10 +120,45 @@ def register():
 
     return render_template('register.html', message = message)
 
+@app.route("/country/<int:id>")
+def country_info(id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM COUNTRY where countryID=%s',(id,))
+    country = cursor.fetchone()
+    cursor.execute('SELECT * FROM COUNTRY ORDER BY countryID ASC')
+    countries = cursor.fetchall()
+    return render_template("country.html",country = country, countries = countries)
+
+@app.route("/stats/<int:id>",methods=['GET','POST'])
+def stats_info(id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM COUNTRY order by countryId asc')
+    countries = cursor.fetchall()
+    cursor.execute('SELECT * FROM YEAR_QUARTER where countryID=%s order by year_quarter',(id,))
+    country = cursor.fetchall()
+    cursor.execute('SELECT * FROM LABOUR_STATUS where countryID=%s order by year_quarter',(id,))
+    labour_stat = cursor.fetchall()
+    cursor.execute('SELECT * FROM EDUCATION_LEVEL_EMPLOYED where countryID=%s order by year_quarter,level_number',(id,))
+    educated_employed = cursor.fetchall()
+    cursor.execute('SELECT * FROM PROFESSION_STATUS where countryID=%s order by year_quarter,type',(id,))
+    profession = cursor.fetchall()
+    cursor.execute('SELECT * FROM PROFESSION_TYPE')
+    profession_type = cursor.fetchall()
+    cursor.execute('SELECT * FROM EMPLOYMENT_PART_FULL where countryID=%s order by year_quarter,work_type',(id,))
+    employment = cursor.fetchall()
+    cursor.execute('SELECT * FROM EMPLOYMENT_TYPE')
+    employment_type = cursor.fetchall()
+    cursor.execute('SELECT * FROM NACE_EMPLOYMENT where countryID=%s order by year_quarter,job_area',(id,))
+    nace_emp = cursor.fetchall()
+    cursor.execute('SELECT * FROM NACE_JOBS')
+    nace_title = cursor.fetchall()
+    cursor.execute('SELECT * FROM EDUCATION_TRAINING where countryID=%s order by year_quarter',(id,))
+    edu_tra = cursor.fetchall()
+    return render_template("stats.html",countries = countries, country = country, labour_stat = labour_stat, educated_employed =educated_employed,profession=profession,profession_type=profession_type,employment_type=employment_type,employment=employment,nace_emp=nace_emp,nace_title=nace_title,edu_tra=edu_tra)
+
 @app.route("/password")
 def forgot_password():
     return render_template("password.html")
-
 
 @app.errorhandler(404)
 def not_found_page(e):

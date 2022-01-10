@@ -1,0 +1,346 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="/home">Job finder in EU</a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for country" aria-label="Search for country" aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            <!-- Navbar profile on right corner-->
+            <!-- when signed in up -->
+            <!-- <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">My Profile</a></li>
+                        <li><a class="dropdown-item" href="#!">Settings</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    </ul>
+                </li>
+            </ul> -->
+            <a href="/logout" style="margin: 0.3%;" class="btn btn-primary">Log Out</button></a>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <a class="nav-link" href="/home">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Home Page
+                            </a>
+
+                            <!-- Countries listed -->
+                            <div class="sb-sidenav-menu-heading">Countries</div>
+                            {%for country in countries:%}
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                    {{country['name']}}
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a name="c_id" class="nav-link" href="/country/{{country['countryID']}}">Info</a>
+                                        <a name="s_id" class="nav-link" href="/stats/{{country['countryID']}}">Stats</a>
+                                    </nav>
+                                </div>
+                            {%endfor%}
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        {{session.username}}
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="row justify-content-center mx-5">
+                        <div class="col-sm">
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#population" aria-expanded="false" aria-controls="collapseExample">
+                                <center><b>Country population (if 0, no data)</b></center>
+                              </button>
+                        </div>
+                      </div>
+                      
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">2019Q1</th>
+                            <th scope="col">2019Q2</th>
+                            <th scope="col">2019Q3</th>
+                            <th scope="col">2019Q4</th>
+                            <th scope="col">2020Q1</th>
+                            <th scope="col">2020Q2</th>
+                            <th scope="col">2020Q3</th>
+                            <th scope="col">2020Q4</th>
+                            <th scope="col">2021Q1</th>
+                            <th scope="col">2021Q2</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                              <td>Male</td>
+                                {%for c in country:%}
+                            <td>{{c['m_population']*1000}}</td>
+                                 {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Female</td>
+                            {%for c in country:%}
+                        <td>{{c['f_population']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Total</td>
+                            {%for c in country:%}
+                        <td>{{c['total_population']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Inactive</td>
+                            {%for c in country:%}
+                        <td>{{c['inactive_population']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                        </tbody>
+                      </table>
+                      <center><b>Labour status (if 0, no data)</b></center>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">2019Q1</th>
+                            <th scope="col">2019Q2</th>
+                            <th scope="col">2019Q3</th>
+                            <th scope="col">2019Q4</th>
+                            <th scope="col">2020Q1</th>
+                            <th scope="col">2020Q2</th>
+                            <th scope="col">2020Q3</th>
+                            <th scope="col">2020Q4</th>
+                            <th scope="col">2021Q1</th>
+                            <th scope="col">2021Q2</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                              <td>Male labour</td>
+                                {%for c in labour_stat:%}
+                            <td>{{c['m_labour']*1000}}</td>
+                                 {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Female labour</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['f_labour']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Total labour</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['total_labour']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Self employed</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['self_emloyed']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Male temporary employees</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['m_temp_employees']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Female temporary employees</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['f_temp_employees']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Total temporary employees</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['total_temp_employees']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                          <tr>
+                            <td>Has second job</td>
+                            {%for c in labour_stat:%}
+                        <td>{{c['has_second_job']*1000}}</td>
+                             {%endfor%}
+                          </tr>
+                        </tbody>
+                      </table>
+                      <center><b>Educated people who are employed (if 0, no data)</b></center>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Level</th>
+                            <th scope="col">Quarter</th>
+                            <th scope="col">Male</th>
+                            <th scope="col">Female</th>
+                            <th scope="col">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {%for a in educated_employed:%}
+                            <tr>
+                                <td title="{{a['level']}}">up to {{a['level_number']}}</td>
+                                <td>{{a['year_quarter']}}</td>
+                                <td>{{a['m_educated']*1000}}</td>
+                                <td>{{a['f_educated']*1000}}</td>
+                                <td>{{a['total_educated']*1000}}</td>
+                            </tr>
+                             
+                            {%endfor%}
+                        </tbody>
+                        
+                      </table>
+
+                      <center><b>Profession status (if 0, no data)</b></center>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">Quarter</th>
+                            <th scope="col">Male</th>
+                            <th scope="col">Female</th>
+                            <th scope="col">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {%for a in profession:%}
+                            {%for b in profession_type:%}
+                            <tr>
+                                <td title="{{b['profession_type']}}">{{b['profession_type']}}</td>
+                                <td>{{a['year_quarter']}}</td>
+                                <td>{{a['m_profession']*1000}}</td>
+                                <td>{{a['f_profession']*1000}}</td>
+                                <td>{{a['total_profession']*1000}}</td>
+                            </tr>
+                             
+                            {%endfor%}
+                            {%endfor%}
+                        </tbody>
+                        
+                      </table>
+
+                      <center><b>Employment Parttime/Fulltime (if 0, no data)</b></center>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Work type</th>
+                            <th scope="col">Quarter</th>
+                            <th scope="col">Male</th>
+                            <th scope="col">Female</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Avarage hours</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {%for a in employment:%}
+                            {%for b in employment_type:%}
+                            <tr>
+                                <td title="{{b['employment_type']}}">{{b['employment_type']}}</td>
+                                <td>{{a['year_quarter']}}</td>
+                                <td>{{a['m_employed']*1000}}</td>
+                                <td>{{a['f_employed']*1000}}</td>
+                                <td>{{a['total_employed']*1000}}</td>
+                                <td>{{a['avg_hours']*1000}}</td>
+                            </tr>
+                             
+                            {%endfor%}
+                            {%endfor%}
+                        </tbody>
+                        
+                      </table>
+
+                      <center><b>NACE JOBS (if 0, no data)</b></center>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Job area</th>
+                            <th scope="col">Quarter</th>
+                            <th scope="col">Male</th>
+                            <th scope="col">Female</th>
+                            <th scope="col">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {%for a in nace_emp:%}
+                            {%for b in nace_title:%}
+                            <tr>
+                                <td title="{{b['job_title']}}">{{b['job_title']}}</td>
+                                <td>{{a['year_quarter']}}</td>
+                                <td>{{a['m_employed']*1000}}</td>
+                                <td>{{a['f_employed']*1000}}</td>
+                                <td>{{a['total_employed']*1000}}</td>
+                            </tr>
+                             
+                            {%endfor%}
+                            {%endfor%}
+                        </tbody>
+                        
+                      </table>
+
+                      <center><b>Education and training participation (if 0, no data)</b></center>
+                      <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Gender</th>
+                                <th scope="col">2019Q1</th>
+                                <th scope="col">2019Q2</th>
+                                <th scope="col">2019Q3</th>
+                                <th scope="col">2019Q4</th>
+                                <th scope="col">2020Q1</th>
+                                <th scope="col">2020Q2</th>
+                                <th scope="col">2020Q3</th>
+                                <th scope="col">2020Q4</th>
+                                <th scope="col">2021Q1</th>
+                                <th scope="col">2021Q2</th>
+                              </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td>Male</td>
+                                  {%for c in edu_tra:%}
+                              <td>{{c['m_edu_tra']*1000}}</td>
+                                   {%endfor%}
+                            </tr>
+                            <tr>
+                              <td>Female</td>
+                              {%for c in edu_tra:%}
+                          <td>{{c['f_edu_tra']*1000}}</td>
+                               {%endfor%}
+                            </tr>
+                            <tr>
+                              <td>Total</td>
+                              {%for c in edu_tra:%}
+                          <td>{{c['total_edu_tra']*1000}}</td>
+                               {%endfor%}
+                            </tr>
+                           
+                        </tbody>
+                        
+                      </table>
+                    </div>
+                </div>
+                </main>
+                {% endblock %}
